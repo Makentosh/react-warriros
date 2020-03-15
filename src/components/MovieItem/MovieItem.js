@@ -15,7 +15,7 @@ class MovieItem extends React.Component {
     const {movie, addMovieToWillWatch, removeMovieWillWatch, removeMovie} = this.props;
     return (
       <div className="card">
-        <img className="card-img-top" src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} alt={movie.title}/>
+        <img className="card-img-top" src={`https://image.tmdb.org/t/p/w500${movie.poster_path || movie.backdrop_path}`} alt={movie.title}/>
         <div className="card-body">
           <h5 className="card-title">{movie.title}</h5>
           <div className="card-inner">
