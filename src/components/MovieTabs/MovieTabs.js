@@ -16,7 +16,7 @@ class MovieTabs extends PureComponent {
     };
 
     return (
-      <ul className="tabs nav nav-pills justify-content-center mb-4">
+      <ul className="tabs nav nav-pills justify-content-center mb-4 mt-5">
         <li className="nav-item">
           <div className={classNames('nav-link', {active: activeTabs('popularity.desc')})} onClick={handleClick('popularity.desc')}>Popularity desc</div>
         </li>
