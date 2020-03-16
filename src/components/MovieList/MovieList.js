@@ -3,8 +3,9 @@ import './MovieList.scss';
 // import {moviesData} from "../../moviesData";
 import MovieItem from "../MovieItem";
 
-import {API_URL, API_KEY_3, API_KEY_4} from '../../utils/api'
+import {API_URL, API_KEY_3} from '../../utils/api'
 import MovieTabs from "../MovieTabs";
+import Pagination from "../Pagination";
 
 class MovieList extends React.Component {
   constructor(props) {
@@ -13,19 +14,41 @@ class MovieList extends React.Component {
     this.state = {
       movies: [],
       moviesWillWatch: [],
-      sort_by: "popularity.desc"
+      sort_by: "popularity.desc",
+      currentPage: 1,
+      totalPage: '',
+
     }
   }
 
   componentDidMount() {
-   this.getMovies()
+    this.getMovies();
+
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevState.sort_by !== this.state.sort_by) {
       this.getMovies()
     }
+
+  if (prevState.currentPage !== this.state.currentPage) {
+      this.setNumberPage();
+    }
   }
+
+  setNumberPage = () => {
+    fetch(`${API_URL}/discover/movie?api_key=${API_KEY_3}&page=${this.state.currentPage}`)
+        .then((response) => {
+          console.log(response)
+          return response.json()
+        })
+        .then((data) => {
+          this.setState({
+            movies: data.results,
+          });
+          console.log(data)
+        })
+  };
 
   getMovies = () => {
     fetch(`${API_URL}/discover/movie?api_key=${API_KEY_3}&sort_by=${this.state.sort_by}`)
@@ -33,9 +56,9 @@ class MovieList extends React.Component {
           return response.json()
         })
         .then((data)=> {
-          console.log(data);
           this.setState({
-            movies: data.results
+            movies: data.results,
+            totalPage: data.total_pages
           })
         })
   };
@@ -70,24 +93,45 @@ class MovieList extends React.Component {
     })
   };
 
+  nextPage = () => {
+    this.setState({
+      currentPage: this.state.currentPage + 1
+    })
+  };
+
+  prevPage = () => {
+    this.setState({
+      currentPage: this.state.currentPage === 1 ? this.state.currentPage : this.state.currentPage - 1
+    })
+  };
+
+
+
   render() {
     return (
-      <React.Fragment>
-        <MovieTabs sort_by={this.state.sort_by} updateSortBy={this.updateSortBy}/>
-        <div className="col-md-12 d-flex">
-          <div className="movie col-md-9">
-            <ul className="movie__list">
-              {this.state.movies.map((movie, index) => <MovieItem key={movie.id} removeMovieWillWatch={this.removeMovieWillWatch} addMovieToWillWatch={this.addMovieToWillWatch} removeMovie={this.removeMovie} movie={ movie }/>)}
-            </ul>
+      <div className="container">
+        <div className="row">
+          <div className="col-md-12">
+            <MovieTabs sort_by={this.state.sort_by} updateSortBy={this.updateSortBy}/>
           </div>
-          <div className="movie-list-watch col-md-3">
-            <h1>Will Watch: {this.state.moviesWillWatch.length} movies</h1>
-            <ul className="list-group">
-              {this.state.moviesWillWatch.map((watch, index) =>  <li  key={index} className="list-group-item">{watch.title} {watch.vote_average}</li>)}
-            </ul>
+          <div className="col-md-12">
+            <Pagination nextPage={this.nextPage} prevPage={this.prevPage} currentPage={this.state.currentPage} totalPage={this.state.totalPage}/>
+          </div>
+          <div className="col-md-12 d-flex">
+            <div className="movie col-md-9">
+              <ul className="movie__list">
+                {this.state.movies.map((movie, index) => <MovieItem key={movie.id} removeMovieWillWatch={this.removeMovieWillWatch} addMovieToWillWatch={this.addMovieToWillWatch} removeMovie={this.removeMovie} movie={ movie }/>)}
+              </ul>
+            </div>
+            <div className="movie-list-watch col-md-3">
+              <h1>Will Watch: {this.state.moviesWillWatch.length} movies</h1>
+              <ul className="list-group">
+                {this.state.moviesWillWatch.map((watch, index) =>  <li  key={index} className="list-group-item">{watch.title} {watch.vote_average}</li>)}
+              </ul>
+            </div>
           </div>
         </div>
-      </React.Fragment>
+      </div>
     );
   }
 }
