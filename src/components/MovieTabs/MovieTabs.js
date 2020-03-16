@@ -1,28 +1,30 @@
-import React from "react";
+import React, {PureComponent} from "react";
 import './MovieTabs.scss';
+// const classNames = require('classnames');
 
-const MovieTabs =  props => {
-  const {sort_by, updateSortBy} = props;
+class MovieTabs extends PureComponent {
 
-  const handleClick = value => () => updateSortBy(value);
+  render() {
+    const handleClick = value => () => this.props.updateSortBy(value);
 
-  const getClassByValue = value => {
-    return `nav-link ${sort_by === value ? 'active' : ''}`
-  };
+    // const getClassByValue = value => {
+    //   return `nav-link ${sort_by === value ? 'active' : ''}`
+    // };
 
-  return (
-    <ul className="tabs nav nav-pills justify-content-center mb-4">
-      <li className="nav-item">
-        <div className={getClassByValue('popularity.desc')} onClick={handleClick('popularity.desc')}>Popularity desc</div>
-      </li>
-      <li className="nav-item">
-        <div className={getClassByValue('revenue.desc')} onClick={handleClick('revenue.desc')}>Revenue desc</div>
-      </li>
-      <li className="nav-item">
-        <div className={getClassByValue('vote_average.desc')} onClick={handleClick('vote_average.desc')}>Vote average desc</div>
-      </li>
-    </ul>
-  )
-};
+    return (
+      <ul className="tabs nav nav-pills justify-content-center mb-4">
+        <li className="nav-item">
+          <div className={`nav-link ${this.props.sort_by === 'popularity.desc' ? 'active' : ''}`} onClick={handleClick('popularity.desc')}>Popularity desc</div>
+        </li>
+        <li className="nav-item">
+          <div className={`nav-link ${this.props.sort_by === 'revenue.desc' ? 'active' : ''}`} onClick={handleClick('revenue.desc')}>Revenue desc</div>
+        </li>
+        <li className="nav-item">
+          <div className={`nav-link ${this.props.sort_by === 'vote_average.desc' ? 'active' : ''}`} onClick={handleClick('vote_average.desc')}>Vote average desc</div>
+        </li>
+      </ul>
+    )
+  }
+}
 
 export default MovieTabs;
