@@ -27,7 +27,7 @@ class MovieList extends React.Component {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevState.sort_by !== this.state.sort_by) {
-      this.getMovies({ page: 1})
+      this.getMovies()
     }
 
   if (prevState.page !== this.state.page) {
