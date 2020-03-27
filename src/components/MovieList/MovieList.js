@@ -15,8 +15,8 @@ class MovieList extends React.Component {
       movies: [],
       moviesWillWatch: [],
       sort_by: "popularity.desc",
-      currentPage: 1,
-      totalPage: '',
+      page: '',
+      total_pages: '',
       loading: false
     }
   }
@@ -27,41 +27,29 @@ class MovieList extends React.Component {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevState.sort_by !== this.state.sort_by) {
-      this.getMovies()
+      this.getMovies({ page: 1})
     }
 
-  if (prevState.currentPage !== this.state.currentPage) {
-      this.setNumberPage();
+  if (prevState.page !== this.state.page) {
+      this.getMovies({page: this.state.page});
     }
   }
 
 
-  setNumberPage = () => {
-    fetch(`${API_URL}/discover/movie?api_key=${API_KEY_3}&sort_by=${this.state.sort_by}&page=${this.state.currentPage}`)
-        .then((response) => {
-          return response.json()
-        })
-        .then((data) => {
-          this.setState({
-            movies: data.results,
-          });
-          console.log(data)
-        })
-  };
-
-  getMovies = () => {
+  getMovies = (page) => {
     this.setState({
       loading: true
     });
 
-    fetch(`${API_URL}/discover/movie?api_key=${API_KEY_3}&sort_by=${this.state.sort_by}&page=${this.state.currentPage}`)
+    fetch(`${API_URL}/discover/movie?api_key=${API_KEY_3}&sort_by=${this.state.sort_by}&page=${this.state.page}`)
         .then((response) => {
           return response.json()
         })
         .then((data)=> {
           this.setState({
             movies: data.results,
-            totalPage: data.total_pages,
+            total_pages: data.total_pages,
+            page: data.page,
             loading:  false
           })
         })
@@ -94,19 +82,19 @@ class MovieList extends React.Component {
   updateSortBy = value => {
     this.setState({
       sort_by: value,
-      currentPage: this.state.currentPage
+      page: this.state.page
     })
   };
 
   nextPage = () => {
     this.setState({
-      currentPage: this.state.currentPage + 1
+      page: this.state.page + 1
     })
   };
 
   prevPage = () => {
     this.setState({
-      currentPage: this.state.currentPage === 1 ? this.state.currentPage : this.state.currentPage - 1
+      page: this.state.page - 1
     })
   };
 
@@ -125,7 +113,7 @@ class MovieList extends React.Component {
               <Loader/>
              : <React.Fragment>
               <div className="col-md-12">
-                <Pagination nextPage={this.nextPage} prevPage={this.prevPage} currentPage={this.state.currentPage} totalPage={this.state.totalPage}/>
+                <Pagination nextPage={this.nextPage} prevPage={this.prevPage} page={this.state.page} total_pages={this.state.total_pages}/>
               </div>
               <div className="col-md-12 d-flex">
                 <div className="movie col-md-9">
